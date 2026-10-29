@@ -1,0 +1,11 @@
+# private
+config.json
+*.cred.xml
+current_team.json
+# runtime
+data/
+logs/
+reports/
+recommendations/
+badges/
+__pycache__/
