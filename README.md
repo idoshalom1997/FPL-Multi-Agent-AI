@@ -105,13 +105,13 @@ The orchestrator runs on Claude Fable and the specialists on Claude Opus.
 [`CLAUDE.md`](CLAUDE.md) is the shared rulebook every agent reads first.  
 Most of its rules exist because something broke and had to be fixed.
 
-### The data layer
+### Where the data comes from
 
-Agents never call the FPL API directly.  
-[`fpl.py`](fpl.py) wraps the official **REST API** with a disk cache, so all nine agents argue from one snapshot of the facts.  
-The analysis tools sit on top of it:
+The agents get their facts from the official FPL API, the website's public data feed.  
+They never read it directly: [`fpl.py`](fpl.py), a Python file built for this project, downloads the data, keeps a copy, and hands every agent the same numbers.  
+On top of it sit small analysis tools of our own, which the agents run like calculators:
 
-| File | What it measures |
+| File | What it does |
 |---|---|
 | [`fpl.py`](fpl.py) | players, fixtures, live points, managers' teams, real team strength |
 | [`elite.py`](elite.py) | what the world top 100 own, and how they play the season (transfers, hits, captains, chips) |
@@ -119,16 +119,15 @@ The analysis tools sit on top of it:
 | [`gap.py`](gap.py), [`league_status.py`](league_status.py) | the gap to each rival, and every manager's transfers, free transfers and chips left |
 | [`lineup.py`](lineup.py) | the FPL-style pitch pictures in every email |
 
-## How it is evaluated
+## How it checks itself
 
-An AI system that is never checked teaches nothing, so evaluation is built in:
+Every recommendation is checked, so the system learns instead of guessing:
 
-1. **Pre-registration.** Before the deadline, every lineup offered is saved exactly as it was offered, with its predicted points and best and worst case ([`outcome.py`](outcome.py)).
-2. **Scoring.** After the gameweek, the real result is downloaded and each option is scored with chips applied.  
-   Scoring refuses to run before the deadline, because the API would still return last week's team.
-3. **Baselines.** Each result is compared with **doing nothing**, the **top-100 average**, the **world average** and FPL's **Team of the Week** as the ceiling ([`benchmark.py`](benchmark.py)).
-4. **Process, not luck.** The Historian judges each decision right, wrong, unlucky or too early, based only on what was knowable at the time.
-5. **Feedback.** Every report must name one thing done differently because of a past mistake.  
+1. **Saved before the matches.** Every lineup the staff offer is saved before the deadline, with the points they expect ([`outcome.py`](outcome.py)).
+2. **Scored after the matches.** The real result is downloaded and every lineup gets its real score, chips included.
+3. **Compared with simple alternatives.** Each result is compared with doing nothing, the top-100 average, the world average and FPL's Team of the Week ([`benchmark.py`](benchmark.py)).
+4. **Judged on the decision, not on luck.** The Historian marks each decision right or wrong based only on what was known before the deadline.
+5. **Learning from mistakes.** Every report names one thing done differently because of a past mistake.  
    Each week's two goals are marked met or missed.
 
 ## Privacy
