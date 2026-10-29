@@ -94,35 +94,10 @@ An AI system that is never checked teaches nothing, so evaluation is built in:
 4. **Process, not luck.** The Historian judges each decision right, wrong, unlucky or too early, based only on what was knowable at the time.
 5. **Feedback.** Every report must name one thing done differently because of a past mistake. Each week's two goals are marked met or missed.
 
-## Honest limits
-
-- **Small sample.** A few gameweeks of noisy football points are early signs, not proof.
-- **Not a controlled experiment.** I read the advice before making my own choices.
-- **No trained model yet.** The intelligence is LLM reasoning over data plus hand-built metrics. A points-prediction model the agents can call as a tool is the natural next step.
-- **Web search, not a curated knowledge base.** A RAG layer over press conferences would let the agents cite their sources.
-
 ## Privacy
 
 This repository is a public copy of a private working folder. The other managers appear only by their team names. My entry and league IDs, my email setup and the decision notes stay private (see `config.example.json`). Results are refreshed each gameweek by [`export_results.py`](export_results.py) and published only after I approve them.
 
-## How to run
-
-Python 3.10+ with `requests`, `matplotlib` and `numpy`, plus [Claude Code](https://claude.com/claude-code) for the agents.
-
-```bash
-pip install requests matplotlib numpy
-cp config.example.json config.json      # your FPL entry ID and league ID
-python fpl.py status                    # current gameweek and deadline
-python gap.py                           # the gap to each rival
-python elite.py refresh                 # what the world top 100 own and how they play
-```
-
-The scheduled reports run through `schedule.ps1` (Windows Task Scheduler) → `dispatch.ps1` → `run_report.ps1`.
-
 ## Tools
 
 Python · Claude Code · LLM agents (Claude Fable, Opus) · Multi-agent orchestration · MCP · REST APIs · Windows Task Scheduler · Matplotlib
-
-## Background
-
-Built in September–October 2026 by **Ido Shalom** with Claude Code as a coding partner. I designed the system: the agent roles, the rules, the data it uses and how it is evaluated.
