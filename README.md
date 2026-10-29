@@ -2,41 +2,55 @@
 
 **Can a team of AI agents help me improve in FPL?**
 
-Every gameweek in Fantasy Premier League (FPL) brings the same decisions: which 11 of my 15 players start, who is captain, whether to make transfers, and when to play a chip. I play in a four-manager league with friends. Instead of deciding alone, I built a **multi-agent AI system** that works like a real football staff. Before every deadline, nine LLM agents read live data, argue, and email me two lineups. **The AI only advises; I make every change myself.**
+Every gameweek in Fantasy Premier League (FPL) brings the same decisions: which 11 of my 15 players start, who is captain, whether to make transfers, and when to play a chip.  
+I play in a four-manager league with friends.  
+Instead of deciding alone, I built a **multi-agent AI system** that works like a real football staff.  
+Before every deadline, nine LLM agents read live data, argue, and email me two lineups.  
+**The AI only advises; I make every change myself.**
 
-The system runs by itself through the season, and every recommendation is checked against what actually happened. That way the question above gets a measured answer instead of a feeling.
+The system runs by itself through the season, and every recommendation is checked against what actually happened.  
+That way the question above gets a measured answer instead of a feeling.
 
 ## Findings
 
 <!-- RESULTS:START -->
 *Updated after GW8. The AI staff started advising in GW4.*
 
-### 1. Am I improving week to week?
+### 1. Did I do better when I used the AI's advice?
 
-![Score out of 10 each week](results/score_by_week.png)
+![Score out of 10, by whether I used the advice](results/score_by_advice.png)
 
-- My average week went from **4.0/10** before the staff to **5.6/10** with them.
-- Against the average of the world's top 100 managers: **-33 points a week** before, **-22** with the staff. Closer, still behind.
+Weeks I used the advice: **4.7/10** on average (2 weeks).  
+Weeks I went my own way: **6.1/10** (3 weeks).  
+Before there was any advice: **4.0/10**.  
+With this few weeks, one good or bad week moves an average a lot.
 
 ### 2. Does the advice beat doing nothing?
 
 ![Points gained against doing nothing](results/staff_vs_doing_nothing.png)
 
-- Over GW4-8 the staff's recommended lineups scored **272** points against **243** for doing nothing (**+12%**). My own choices, made after reading the advice, scored **274**.
+Over GW4-8 the staff's recommended lineups scored **272** points against **243** for doing nothing (**+12%**).  
+My own choices, made after reading the advice, scored **274**.
 
 ### 3. The league race
 
 ![Gap to each team](results/league_race.png)
 
-- The goal is to beat three friends who play without AI. Since the staff started: **Nott'm Random Forest** -52 → -69, **Wei & Dudley** -17 → -65, **Rookie mistakes** -55 → -32.
+The goal is to beat three friends who play without AI.  
+Since the staff started: **Nott'm Random Forest** -52 → -69, **Wei & Dudley** -17 → -65, **Rookie mistakes** -55 → -32.  
+Blue points mark the weeks a chip was played, because a chip can swing a week on its own.
 
 ### 4. Can the staff predict their own results?
 
-*Coming soon - tracked from GW9.* Before every deadline the staff now record the points they expect, with a best and worst case. This section will compare each forecast with the real score.
+*Coming soon - tracked from GW9.*  
+Before every deadline the staff now record the points they expect, with a best and worst case.  
+This section will compare each forecast with the real score.
 
 ### 5. Do we reach the goals we set?
 
-*Coming soon - from GW10.* Each planning run sets two checkable goals for the week (for example "close 5 points on a rival" or "beat the top-100 average"). The review marks each one met or missed, and the record will appear here.
+*Coming soon - from GW10.*  
+Each planning run sets two checkable goals for the week, for example "close 5 points on a rival" or "beat the top-100 average".  
+The review marks each one met or missed, and the record will appear here.
 <!-- RESULTS:END -->
 
 ## How it works
@@ -57,7 +71,9 @@ flowchart LR
     O --> AM
 ```
 
-Everything is timed from the **deadline**, not the weekday, because some deadlines fall midweek. A scheduler wakes every 3 hours. A small Python file (`due.py`, no AI) decides whether one of four runs is due:
+Everything is timed from the **deadline**, not the weekday, because some deadlines fall midweek.  
+A scheduler wakes every 3 hours.  
+A small Python file (`due.py`, no AI) decides whether one of four runs is due:
 
 | Run | When | What it does |
 |---|---|---|
@@ -66,11 +82,13 @@ Everything is timed from the **deadline**, not the weekday, because some deadlin
 | **Main** | about 1 day before | reads my emailed team through the **Gmail MCP connector**, runs the staff meeting, and emails two lineups (three in a chip week) |
 | **Check** | last 8 hours | re-checks fitness and whether the report really arrived; silent unless something is wrong |
 
-Each run starts Claude **headlessly** (`claude -p`, no chat window, nobody watching). It does the work and emails me the result.
+Each run starts Claude **headlessly** (`claude -p`, no chat window, nobody watching).  
+It does the work and emails me the result.
 
 ### The staff
 
-Each agent is one file in [`.claude/agents/`](.claude/agents/) that sets its role, the tools it may use and its model. The orchestrator runs on Claude Fable and the specialists on Claude Opus.
+Each agent is one file in [`.claude/agents/`](.claude/agents/) that sets its role, the tools it may use and its model.  
+The orchestrator runs on Claude Fable and the specialists on Claude Opus.
 
 | Agent | How it does its job |
 |---|---|
@@ -84,11 +102,14 @@ Each agent is one file in [`.claude/agents/`](.claude/agents/) that sets its rol
 | Media Analyst | Downloads the world top 100 managers' teams every week and tracks how they play the season. |
 | Historian | The memory. Keeps a ledger of every decision, judged on what was knowable *before* the deadline, not on luck. |
 
-[`CLAUDE.md`](CLAUDE.md) is the shared rulebook every agent reads first. Most of its rules exist because something broke and had to be fixed.
+[`CLAUDE.md`](CLAUDE.md) is the shared rulebook every agent reads first.  
+Most of its rules exist because something broke and had to be fixed.
 
 ### The data layer
 
-Agents never call the FPL API directly. [`fpl.py`](fpl.py) wraps the official **REST API** with a disk cache, so all nine agents argue from one snapshot of the facts. The analysis tools sit on top of it:
+Agents never call the FPL API directly.  
+[`fpl.py`](fpl.py) wraps the official **REST API** with a disk cache, so all nine agents argue from one snapshot of the facts.  
+The analysis tools sit on top of it:
 
 | File | What it measures |
 |---|---|
@@ -103,14 +124,19 @@ Agents never call the FPL API directly. [`fpl.py`](fpl.py) wraps the official **
 An AI system that is never checked teaches nothing, so evaluation is built in:
 
 1. **Pre-registration.** Before the deadline, every lineup offered is saved exactly as it was offered, with its predicted points and best and worst case ([`outcome.py`](outcome.py)).
-2. **Scoring.** After the gameweek, the real result is downloaded and each option is scored with chips applied. Scoring refuses to run before the deadline, because the API would still return last week's team.
+2. **Scoring.** After the gameweek, the real result is downloaded and each option is scored with chips applied.  
+   Scoring refuses to run before the deadline, because the API would still return last week's team.
 3. **Baselines.** Each result is compared with **doing nothing**, the **top-100 average**, the **world average** and FPL's **Team of the Week** as the ceiling ([`benchmark.py`](benchmark.py)).
 4. **Process, not luck.** The Historian judges each decision right, wrong, unlucky or too early, based only on what was knowable at the time.
-5. **Feedback.** Every report must name one thing done differently because of a past mistake. Each week's two goals are marked met or missed.
+5. **Feedback.** Every report must name one thing done differently because of a past mistake.  
+   Each week's two goals are marked met or missed.
 
 ## Privacy
 
-This repository is a public copy of a private working folder. The other managers appear only by their team names. My entry and league IDs, my email setup and the decision notes stay private (see `config.example.json`). Results are refreshed each gameweek by [`export_results.py`](export_results.py) and published only after I approve them.
+This repository is a public copy of a private working folder.  
+The other managers appear only by their team names.  
+My entry and league IDs, my email setup and the decision notes stay private (see `config.example.json`).  
+Results are refreshed each gameweek by [`export_results.py`](export_results.py) and published only after I approve them.
 
 ## Tools
 
