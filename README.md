@@ -6,24 +6,38 @@ Every gameweek in Fantasy Premier League (FPL) brings the same decisions: which 
 
 The system runs by itself through the season, and every recommendation is checked against what actually happened. That way the question above gets a measured answer instead of a feeling.
 
-![Did the AI staff's advice beat doing nothing?](results/staff_vs_baseline.png)
-
 ## Findings
 
 <!-- RESULTS:START -->
-| GW | Staff advice | What I played | Doing nothing | Score /10 | vs top-100 avg | World rank |
-|---|---|---|---|---|---|---|
-| 4 | 87 | 72 | 72 | 6.0 | -28 | 6.62M |
-| 5 | 57 | 57 | 55 | 8.0 | -3 | 5.76M |
-| 6 | 43 | 54 | 47 | 4.1 | -29 | 5.89M |
-| 7 | 46 | 42 | 42 | 1.4 | -43 | 6.80M |
-| 8 | 39 | 49 | 27 | 8.3 | -10 | 6.60M |
-| **Total** | **272** | **274** | **243** | | | |
+*Updated after GW8. The AI staff started advising in GW4.*
 
-Over GW4-8 the staff's recommended lineups scored **+12%** against doing nothing. It is a small sample, so read it as an early sign, not proof.
+### 1. Am I improving week to week?
+
+![Score out of 10 each week](results/score_by_week.png)
+
+- My average week went from **4.0/10** before the staff to **5.6/10** with them.
+- Against the average of the world's top 100 managers: **-33 points a week** before, **-22** with the staff. Closer, still behind.
+
+### 2. Does the advice beat doing nothing?
+
+![Points gained against doing nothing](results/staff_vs_doing_nothing.png)
+
+- Over GW4-8 the staff's recommended lineups scored **272** points against **243** for doing nothing (**+12%**). My own choices, made after reading the advice, scored **274**.
+
+### 3. The league race
+
+![Gap to each team](results/league_race.png)
+
+- The goal is to beat three friends who play without AI. Since the staff started: **Nott'm Random Forest** -52 → -69, **Wei & Dudley** -17 → -65, **Rookie mistakes** -55 → -32.
+
+### 4. Can the staff predict their own results?
+
+*Coming soon - tracked from GW9.* Before every deadline the staff now record the points they expect, with a best and worst case. This section will compare each forecast with the real score.
+
+### 5. Do we reach the goals we set?
+
+*Coming soon - from GW10.* Each planning run sets two checkable goals for the week (for example "close 5 points on a rival" or "beat the top-100 average"). The review marks each one met or missed, and the record will appear here.
 <!-- RESULTS:END -->
-
-**Scores.** *Staff advice*, *What I played* and *Doing nothing* are points over the gameweek, auto-substitutions applied. *Score /10* is the share of all ~11 million FPL managers I beat that week. *vs top-100 avg* compares me with the average of the world's current top 100 managers.
 
 ## How it works
 

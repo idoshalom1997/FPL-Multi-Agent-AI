@@ -1,5 +1,8 @@
 {
   "entry_id": 1234567,
   "league_id": 123456,
-  "live_dir": "path/to/the/private/working/folder"
+  "live_dir": "path/to/the/private/working/folder",
+  "names": {
+    "Rival's real name": "Their team name"
+  }
 }
