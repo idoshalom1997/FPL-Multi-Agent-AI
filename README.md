@@ -20,9 +20,8 @@ That way the question above gets a measured answer instead of a feeling.
 
 ![Score out of 10, by whether I used the advice](results/score_by_advice.png)
 
-Weeks I used the advice: **4.7/10** on average (2 weeks).  
-Weeks I went my own way: **7.1/10** (4 weeks).  
-Before there was any advice: **4.0/10**.  
+Weeks I relied on the team: **4.7/10** on average (2 weeks).  
+Weeks I went my own way: **5.8/10** (7 weeks, including GW1-3).  
 With this few weeks, one good or bad week moves an average a lot.
 
 ### 2. Does the advice beat doing nothing?
@@ -48,11 +47,12 @@ The real score landed inside the staff's best-to-worst range in **1 of 1** weeks
 
 ### 5. Do we reach the goals we set?
 
-Weekly goals met so far: **1 of 1** weeks.
+Goals met so far: **2 of 2**.
 
-| GW | Goal 1 | Goal 2 | Result |
-|---|---|---|---|
-| 9 | The FH XI beats the BALANCED XI by 6 or more (`outcome.py`, chip applied) | Gain 3 or more on Rookie mistakes, AND on at least one of Nott'm Random Forest or Wei & Dudley | 1 **MET** (82 v BALANCED 32 as drawn / 41 with the auto-sub: +50 / +41) · 2 **MET** (+3 Rookie mistakes, exactly the bar; +31 Nott'm Random Forest, +12 Wei & Dudley) |
+**GW9**
+
+- **Met:** My Free Hit team beats the staff's lineup by 6 points or more (won by 41).
+- **Met:** Gain 3 points or more on Rookie mistakes and on at least one other friend (gained 3, plus 31 and 12 on the others).
 <!-- RESULTS:END -->
 
 ## How it works

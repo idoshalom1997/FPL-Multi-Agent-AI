@@ -5,11 +5,11 @@ The system itself runs in a private working folder; this repository is the
 public copy. Each week, after the review run has scored the gameweek, this
 script reads that folder (read-only) and rewrites:
 
-    results/weekly.csv                 points, score /10, top-100 and world average, rank
+    results/weekly.csv                 points, score /10, top-100 and world average
     results/staff_vs_baseline.csv      staff's recommended lineup v what I played v doing nothing
     results/league_gaps.csv            the gap to each rival team after every gameweek
     results/forecasts.csv              the staff's predicted points v the real score (from GW9)
-    results/goals.csv                  each week's two goals, met or missed (from GW10)
+    results/goals.csv                  each week's two goals in plain words, met or missed
     results/*.png                      the charts in the README
     README.md                          the Findings section, between the RESULTS markers
 
@@ -97,21 +97,17 @@ def _team_names(text: str) -> str:
 
 
 def goals() -> list[dict]:
-    """Each week's two goals from the private season plan, with real names swapped for team names."""
-    text = (LIVE / "season_plan.md").read_text(encoding="utf-8")
-    if "## 6. Weekly goals" not in text:
+    """Each played week's two goals in plain words, from the short file the review writes.
+
+    Real names are swapped for team names. A week appears only once it has a result.
+    """
+    path = LIVE / "goals_public.json"
+    if not path.exists():
         return []
-    block = text[text.index("## 6. Weekly goals"):]
-    rows = []
-    for line in block.splitlines()[1:]:
-        if line.startswith("## "):
-            break
-        cells = [c.strip() for c in line.strip().strip("|").split("|")]
-        # A week with no result yet has not been played: it is neither shown nor counted.
-        if len(cells) >= 4 and _first_int(cells[0]) is not None and "---" not in line and cells[3]:
-            rows.append({"gw": _first_int(cells[0]), "goal_1": _team_names(cells[1]),
-                         "goal_2": _team_names(cells[2]), "result": _team_names(cells[3])})
-    return rows
+    data = json.loads(path.read_text(encoding="utf-8"))
+    return [{"gw": int(gw), "goal": _team_names(g["goal"]), "met": bool(g["met"]),
+             "result": _team_names(g.get("result", ""))}
+            for gw in sorted(data, key=int) for g in data[gw]]
 
 
 def advice_use() -> dict[int, str]:
@@ -199,11 +195,10 @@ def chart_score(plt, weeks: list[dict], use: dict[int, str]) -> None:
     """Score out of 10, grouped by whether I played the staff's advice."""
     fig, ax = _frame(plt, "Did I do better when I used the AI's advice?",
                      "Score out of 10 = the share of all ~11 million FPL managers I beat that gameweek")
-    groups = [("No advice yet", "none", PRE), ("Used the advice", "used", BLUE),
-              ("Went my own way", "own", ORANGE)]
+    groups = [("Went my own way", ("none", "own"), ORANGE), ("Relied on the team", ("used",), BLUE)]
     x, ticks, labels = 0.0, [], []
     for title, key, col in groups:
-        wk = [w for w in weeks if use.get(w["gw"], "none") == key]
+        wk = [w for w in weeks if use.get(w["gw"], "none") in key]
         if not wk:
             continue
         xs = [x + i for i in range(len(wk))]
@@ -217,19 +212,18 @@ def chart_score(plt, weeks: list[dict], use: dict[int, str]) -> None:
         ax.hlines(m, xs[0] - 0.42, xs[-1] + 0.42, colors=INK, linestyles=(0, (4, 3)),
                   linewidth=1.3, zorder=4)
         mid = (xs[0] + xs[-1]) / 2
-        ax.text(mid, 10.25, title, ha="center", fontsize=10, color=col if key != "none" else MUTED,
-                fontweight="bold")
-        ax.text(mid, 9.65, f"average {m:.1f}  ·  {len(wk)} week{'s' if len(wk) > 1 else ''}",
+        ax.text(mid, 12.5, title, ha="center", fontsize=10, color=col, fontweight="bold")
+        ax.text(mid, 11.75, f"average {m:.1f}  ·  {len(wk)} week{'s' if len(wk) > 1 else ''}",
                 ha="center", fontsize=9, color=MUTED)
         ticks += xs
         labels += [f"GW{w['gw']}" for w in wk]
         x = xs[-1] + 1.9
     ax.set_xticks(ticks, labels)
-    ax.set_ylim(0, 10.9)
-    ax.set_yticks([0, 2, 4, 6, 8])
+    ax.set_ylim(0, 13.2)              # bars and their labels stop at 11; the headings sit above that
+    ax.set_yticks([0, 2, 4, 6, 8, 10])
     ax.set_xlim(-0.7, x - 1.2)
-    fig.text(0.035, 0.03, "Used = my team matched a staff lineup to within one player, same captain. "
-             "Dashed line = the group's average.", fontsize=8.5, color=MUTED)
+    fig.text(0.035, 0.03, "Relied on the team = within one player of a staff lineup, same captain. "
+             "My own way includes GW1-3. Dashed line = average.", fontsize=8.5, color=MUTED)
     _save(fig, "score_by_advice.png")
     plt.close(fig)
 
@@ -250,14 +244,15 @@ def chart_staff(plt, staff: list[dict]) -> None:
             ax.text(b.get_x() + b.get_width() / 2, y, f"{v:+d}" if v else "0", ha="center",
                     va="bottom" if v >= 0 else "top", fontsize=9, color=INK)
     ax.axhline(0, color=MUTED, linewidth=1, zorder=4)
-    ax.text(gws[-1] + 0.55, 0, "doing\nnothing", va="center", fontsize=8.5, color=MUTED)
+    ax.text(gws[-1] + 0.55, 0, "doing\nnothing", va="center", fontsize=8.5, color=MUTED, zorder=5,
+            bbox=dict(boxstyle="square,pad=0.15", facecolor=SURFACE, edgecolor="none"))
     lo, hi = min(s + m), max(s + m)
-    ax.set_ylim(min(lo - 4, -5), hi + 5)
+    ax.set_ylim(min(lo - 4, -5), hi + max(5, 0.12 * (hi - lo)))
     ax.set_xlim(gws[0] - 0.6, gws[-1] + 0.95)
     ax.set_xticks(gws, [f"GW{g}" for g in gws])
     ts, tm = sum(s), sum(m)
-    ax.legend(frameon=False, loc="upper right", fontsize=9, labelcolor=MUTED, ncols=2,
-              bbox_to_anchor=(1.0, 1.02))
+    fig.legend(*ax.get_legend_handles_labels(), frameon=False, loc="center right", fontsize=9,
+               labelcolor=MUTED, ncols=2, bbox_to_anchor=(0.97, 0.81))
     fig.text(0.035, 0.825, f"Total: staff {ts:+d} points · me {tm:+d} points", fontsize=10,
              color=INK, va="top", fontweight="bold")
     _save(fig, "staff_vs_doing_nothing.png")
@@ -326,7 +321,17 @@ def chart_forecasts(plt, rows: list[dict]) -> None:
         ax.plot([r["gw"], r["gw"]], [r["predicted"], r["actual"]], color=GRID, linewidth=3, zorder=2)
     ax.scatter(gws, [r["predicted"] for r in rows], s=70, color=FAINT, zorder=3, label="Predicted")
     ax.scatter(gws, [r["actual"] for r in rows], s=70, color=BLUE, zorder=4, label="Real score")
-    ax.legend(frameon=False, loc="upper right", fontsize=9, labelcolor=MUTED)
+    for r in rows:
+        above = r["actual"] >= r["predicted"]
+        ax.text(r["gw"] + 0.03, r["actual"] + (2 if above else -2), str(r["actual"]), ha="center",
+                va="bottom" if above else "top", fontsize=10, color=INK, fontweight="bold")
+        ax.text(r["gw"] + 0.03, r["predicted"] + (-2 if above else 2), str(r["predicted"]), ha="center",
+                va="top" if above else "bottom", fontsize=10, color=MUTED)
+    vals = [r["predicted"] for r in rows] + [r["actual"] for r in rows]
+    ax.set_ylim(min(0, min(vals) - 10), max(vals) + 12)
+    ax.set_xlim(min(gws) - 1, max(gws) + 1)
+    fig.legend(*ax.get_legend_handles_labels(), frameon=False, loc="center right", fontsize=9,
+               labelcolor=MUTED, ncols=2, bbox_to_anchor=(0.97, 0.81))
     ax.set_xticks(gws, [f"GW{g}" for g in gws])
     _save(fig, "forecasts.png")
     plt.close(fig)
@@ -351,10 +356,10 @@ def findings(staff, weeks, gaps, fc, gl, use) -> str:
     out = [f"*Updated after GW{weeks[-1]['gw']}. The AI staff started advising in GW{STAFF_FROM}.*", "",
            "### 1. Did I do better when I used the AI's advice?", "",
            "![Score out of 10, by whether I used the advice](results/score_by_advice.png)", ""]
-    if by["used"] and by["own"]:
-        out += lines(f"Weeks I used the advice: **{avg(by['used']):.1f}/10** on average ({used_n} weeks).",
-                     f"Weeks I went my own way: **{avg(by['own']):.1f}/10** ({own_n} weeks).",
-                     f"Before there was any advice: **{avg(by['none']):.1f}/10**.",
+    mine = by["none"] + by["own"]
+    if by["used"] and mine:
+        out += lines(f"Weeks I relied on the team: **{avg(by['used']):.1f}/10** on average ({used_n} weeks).",
+                     f"Weeks I went my own way: **{avg(mine):.1f}/10** ({len(mine)} weeks, including GW1-3).",
                      "With this few weeks, one good or bad week moves an average a lot.")
     out += ["", "### 2. Does the advice beat doing nothing?", "",
             "![Points gained against doing nothing](results/staff_vs_doing_nothing.png)", ""]
@@ -379,10 +384,11 @@ def findings(staff, weeks, gaps, fc, gl, use) -> str:
                      "This section will compare each forecast with the real score.")
     out += ["", "### 5. Do we reach the goals we set?", ""]
     if gl:
-        met = sum(1 for g in gl for r in [g["result"].lower()] if "met" in r and "missed" not in r)
-        out += [f"Weekly goals met so far: **{met} of {len(gl)}** weeks.", "",
-                "| GW | Goal 1 | Goal 2 | Result |", "|---|---|---|---|"]
-        out += [f"| {g['gw']} | {g['goal_1']} | {g['goal_2']} | {g['result'] or '-'} |" for g in gl]
+        out += [f"Goals met so far: **{sum(g['met'] for g in gl)} of {len(gl)}**."]
+        for gw in sorted({g["gw"] for g in gl}):
+            out += ["", f"**GW{gw}**", ""]
+            out += [f"- **{'Met' if g['met'] else 'Missed'}:** {g['goal'].rstrip('.')}"
+                    + (f" ({g['result']})." if g["result"] else ".") for g in gl if g["gw"] == gw]
     else:
         out += lines("*Coming soon - from GW10.*",
                      "Each planning run sets two checkable goals for the week, for example "
@@ -410,8 +416,9 @@ def main(argv: list[str]) -> int:
     staff, weeks, gaps, fc, gl = staff_record(), benchmark_weeks(), league_gaps(), forecasts(), goals()
     use, chips = advice_use(), chips_by_week()
     write_csv(OUT / "staff_vs_baseline.csv", staff)
+    # No world ranks: an exact rank leads to the entry, and from there to the league and the friends.
     write_csv(OUT / "weekly.csv", [{k: w[k] for k in ("gw", "points", "score10", "top100", "vs_top100",
-                                                       "average", "vs_average", "gw_rank", "overall_rank")}
+                                                       "average", "vs_average")}
                                     for w in weeks])
     write_csv(OUT / "league_gaps.csv", gaps)
     write_csv(OUT / "forecasts.csv", fc)

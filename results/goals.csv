@@ -1,2 +1,3 @@
-gw,goal_1,goal_2,result
-9,"The FH XI beats the BALANCED XI by 6 or more (`outcome.py`, chip applied)","Gain 3 or more on Rookie mistakes, AND on at least one of Nott'm Random Forest or Wei & Dudley","1 **MET** (82 v BALANCED 32 as drawn / 41 with the auto-sub: +50 / +41) · 2 **MET** (+3 Rookie mistakes, exactly the bar; +31 Nott'm Random Forest, +12 Wei & Dudley)"
+gw,goal,met,result
+9,My Free Hit team beats the staff's lineup by 6 points or more.,True,won by 41
+9,Gain 3 points or more on Rookie mistakes and on at least one other friend.,True,"gained 3, plus 31 and 12 on the others"
