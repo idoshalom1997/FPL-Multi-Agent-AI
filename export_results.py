@@ -107,7 +107,8 @@ def goals() -> list[dict]:
         if line.startswith("## "):
             break
         cells = [c.strip() for c in line.strip().strip("|").split("|")]
-        if len(cells) >= 4 and _first_int(cells[0]) is not None and "---" not in line:
+        # A week with no result yet has not been played: it is neither shown nor counted.
+        if len(cells) >= 4 and _first_int(cells[0]) is not None and "---" not in line and cells[3]:
             rows.append({"gw": _first_int(cells[0]), "goal_1": _team_names(cells[1]),
                          "goal_2": _team_names(cells[2]), "result": _team_names(cells[3])})
     return rows
@@ -425,7 +426,8 @@ def main(argv: list[str]) -> int:
     if (ROOT / ".git").exists():
         git("add", "-A", "results", "README.md")
         if git("status", "--porcelain", "--", "results", "README.md").strip():
-            git("commit", "-m", f"Results after GW{weeks[-1]['gw']}")
+            git("commit", "-m", f"Results after GW{weeks[-1]['gw']}",
+                "-m", "Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>")
             print(f"Committed results after GW{weeks[-1]['gw']} locally - not pushed. "
                   "Run with --publish once approved.")
         else:

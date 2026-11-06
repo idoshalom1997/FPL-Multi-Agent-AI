@@ -13,6 +13,7 @@ in its own transcript) and whether it has handed back. Read-only.
 """
 import json, sys, time, hashlib
 from pathlib import Path
+import fpl
 
 sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 ROOT = Path(__file__).resolve().parent
@@ -98,7 +99,8 @@ def board():
         if t.exists():
             calls[kind] = calls.get(kind, 0) + len(tool_uses(t))
 
-    lines = [f"GW7 staff meeting - {time.strftime('%H:%M:%S')}", ""]
+    n_gw = fpl.next_event()["id"]
+    lines = [f"GW{n_gw} staff meeting - {time.strftime('%H:%M:%S')}", ""]
     for who in ["assistant-manager"] + STAFF:
         ids = launches.get(who, [])
         n = calls.get(who, 0)
@@ -114,11 +116,11 @@ def board():
             frac, state = min(0.9, mgr / 80), f"running the meeting ({mgr} steps)"
         lines.append(f"{LABEL[who]:<16} {bar(frac)} {int(frac*100):>3}%  {state}")
 
-    gw = "gw7"
+    gw = f"gw{n_gw}"
     steps = [("Lineup pictures", any((ROOT / "reports").glob(f"{gw}_*.png"))
               and len([p for p in (ROOT / "reports").glob(f"{gw}_*.png")]) > 1),
              ("Options recorded", (ROOT / "recommendations" / f"{gw}.json").exists()),
-             ("Email sent", "Main report - GW7" in (ROOT / "logs" / "sent.log").read_text(
+             ("Email sent", f"Main report - GW{n_gw}" in (ROOT / "logs" / "sent.log").read_text(
                  encoding="utf-8", errors="replace"))]
     lines.append("")
     lines.append("   ".join(("✔ " if ok else "· ") + name for name, ok in steps))

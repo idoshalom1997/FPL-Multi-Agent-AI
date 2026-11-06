@@ -326,7 +326,12 @@ def matchups(team_id: int = config.ENTRY_ID, gw: int | None = None, horizon: int
         nxt = next_event()
         gw = nxt["id"] if nxt else current_event()["id"]
     cur = current_event()
-    pk = picks(team_id, cur["id"] if cur else gw)
+    pick_gw = cur["id"] if cur else gw
+    # A Free Hit squad lasts one week; the fifteen he fields next is the one
+    # from before it (same rule as squad()).
+    if pick_gw > 1 and picks(team_id, pick_gw).get("active_chip") == "freehit":
+        pick_gw -= 1
+    pk = picks(team_id, pick_gw)
     pl, tm = players(), teams()
     st = {r["id"]: r for r in strength()}
 
@@ -454,11 +459,19 @@ def squad(team_id: int, event_id: int | None = None) -> dict:
     A readable snapshot of the manager's squad: starting XI, bench, captain,
     bank, squad value, free transfers and chips still available.
     """
+    reverted_from = None
     if event_id is None:
         cur = current_event()
         if not cur:
             raise FPLError("No current gameweek - the season may not have started.")
         event_id = cur["id"]
+        # A Free Hit squad lasts one gameweek. Asked for "the squad" with no
+        # gameweek, the caller wants the fifteen he will field next, which is
+        # the one from before the Free Hit (Ido, 30 Oct 2026: GW10 is the GW8
+        # fifteen, not the GW9 Free Hit). An explicit event_id still returns
+        # exactly what was picked that week.
+        if picks(team_id, event_id).get("active_chip") == "freehit" and event_id > 1:
+            reverted_from, event_id = event_id, event_id - 1
 
     pk = picks(team_id, event_id)
     pl = players()
@@ -502,6 +515,7 @@ def squad(team_id: int, event_id: int | None = None) -> dict:
         "chips_used": sorted(used_chips),
         "chips_available": sorted(all_chips - used_chips),
         "active_chip": pk.get("active_chip"),
+        "freehit_reverted_from": reverted_from,   # set when the Free Hit week was skipped
     }
 
 

@@ -14,14 +14,14 @@ That way the question above gets a measured answer instead of a feeling.
 ## Findings
 
 <!-- RESULTS:START -->
-*Updated after GW8. The AI staff started advising in GW4.*
+*Updated after GW9. The AI staff started advising in GW4.*
 
 ### 1. Did I do better when I used the AI's advice?
 
 ![Score out of 10, by whether I used the advice](results/score_by_advice.png)
 
 Weeks I used the advice: **4.7/10** on average (2 weeks).  
-Weeks I went my own way: **6.1/10** (3 weeks).  
+Weeks I went my own way: **7.1/10** (4 weeks).  
 Before there was any advice: **4.0/10**.  
 With this few weeks, one good or bad week moves an average a lot.
 
@@ -29,28 +29,30 @@ With this few weeks, one good or bad week moves an average a lot.
 
 ![Points gained against doing nothing](results/staff_vs_doing_nothing.png)
 
-Over GW4-8 the staff's recommended lineups scored **272** points against **243** for doing nothing (**+12%**).  
-My own choices, made after reading the advice, scored **274**.
+Over GW4-9 the staff's recommended lineups scored **347** points against **278** for doing nothing (**+25%**).  
+My own choices, made after reading the advice, scored **356**.
 
 ### 3. The league race
 
 ![Gap to each team](results/league_race.png)
 
 The goal is to beat three friends who play without AI.  
-Since the staff started: **Nott'm Random Forest** -52 → -69, **Wei & Dudley** -17 → -65, **Rookie mistakes** -55 → -32.  
+Since the staff started: **Wei & Dudley** -17 → -53, **Nott'm Random Forest** -52 → -38, **Rookie mistakes** -55 → -29.  
 Blue points mark the weeks a chip was played, because a chip can swing a week on its own.
 
 ### 4. Can the staff predict their own results?
 
-*Coming soon - tracked from GW9.*  
-Before every deadline the staff now record the points they expect, with a best and worst case.  
-This section will compare each forecast with the real score.
+![Predicted against real points](results/forecasts.png)
+
+The real score landed inside the staff's best-to-worst range in **1 of 1** weeks.
 
 ### 5. Do we reach the goals we set?
 
-*Coming soon - from GW10.*  
-Each planning run sets two checkable goals for the week, for example "close 5 points on a rival" or "beat the top-100 average".  
-The review marks each one met or missed, and the record will appear here.
+Weekly goals met so far: **1 of 1** weeks.
+
+| GW | Goal 1 | Goal 2 | Result |
+|---|---|---|---|
+| 9 | The FH XI beats the BALANCED XI by 6 or more (`outcome.py`, chip applied) | Gain 3 or more on Rookie mistakes, AND on at least one of Nott'm Random Forest or Wei & Dudley | 1 **MET** (82 v BALANCED 32 as drawn / 41 with the auto-sub: +50 / +41) · 2 **MET** (+3 Rookie mistakes, exactly the bar; +31 Nott'm Random Forest, +12 Wei & Dudley) |
 <!-- RESULTS:END -->
 
 ## How it works

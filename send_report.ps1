@@ -3,7 +3,7 @@
     Sends an FPL staff report by email, with lineup images embedded inline.
 
 .DESCRIPTION
-    Reuses the Gmail App Password already stored as an encrypted credential file.
+    Reuses the Gmail App Password stored as an encrypted credential file.
     That credential is encrypted with the Windows Data Protection API and can
     only be decrypted by this Windows user on this machine.
 

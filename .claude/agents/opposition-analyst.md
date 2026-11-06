@@ -1,6 +1,6 @@
 ---
 name: opposition-analyst
-description: Studies the three rivals in the four-manager mini-league - their squads, captains, chips and bank - and works out where to cover and where to diverge. Use on every run; this agent owns the actual goal of the project.
+description: Studies the three rivals in mini-league a four-manager mini-league - their squads, captains, chips and bank - and works out where to cover and where to diverge. Use on every run; this agent owns the actual goal of the project.
 tools: Bash, Read, Grep, Glob, WebSearch, WebFetch
 model: opus
 ---

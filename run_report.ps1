@@ -192,9 +192,11 @@ background assistant-manager, said "I'll pick up when its notification
 arrives", exited, and the staff died mid-meeting with no email sent. Do not end
 your turn until the email is sent.
 
-Convene all seven specialists via the assistant-manager. Each speaks in two or
-three sentences. Make them answer each other where they disagree rather than
-averaging them.
+Convene all eight specialists via the assistant-manager, in its five rounds:
+facts (with a dated fact sheet), analysis, build (one builder per lineup, and a
+chip lineup built by that chip's own logic), challenge (the whole staff, led by
+the historian), final call. Make them answer each other where they disagree
+rather than averaging them.
 
 THINK HARD - WE ARE LOSING AND IDO WANTS IMPROVEMENT, NOT REPETITION.
 
@@ -518,6 +520,39 @@ changed on his behalf; do not change anything either.
 "@
 }
 
+# His replies, read straight from the mailbox before Claude starts. On 30 Oct
+# 2026 the GW9 run searched Gmail through the connector, which listed his reply
+# thread as a single message; it never opened the thread and nearly built the
+# report on his GW8 team. IMAP cannot hide a reply inside a thread, so the run
+# is now handed every reply as a fact rather than asked to go looking.
+if ($Type -in @('main', 'check')) {
+    try {
+        $cred = Import-Clixml -LiteralPath (Join-Path $Root 'smtp.cred.xml')
+        $env:GMAIL_USER = $cred.UserName
+        $env:GMAIL_PASS = $cred.GetNetworkCredential().Password
+        $env:PYTHONIOENCODING = 'utf-8'
+        $replyText = (& python teamsheet_mail.py --replies | Out-String).Trim()
+    } catch {
+        $replyText = "The mailbox could not be read ($($_.Exception.Message)). Open every [FPL] thread since the last deadline with get_thread - never trust a search result's message count - and look for his reply."
+    } finally {
+        Remove-Item Env:GMAIL_PASS -ErrorAction SilentlyContinue
+    }
+    foreach ($line in ($replyText -split "`r?`n")) { Log "  $line" }
+    $prompt += @"
+
+
+HIS REPLIES SINCE THE LAST DEADLINE - read from the mailbox by teamsheet_mail.py
+before you started. This is authoritative: do not conclude he has not replied
+because a Gmail search shows nothing.
+
+$replyText
+
+Read every screenshot listed above (open the image file) and his words, and
+record the team with team_update.py as instructed - unless current_team.json was
+recorded after his latest reply.
+"@
+}
+
 Log "=== $Type run starting ==="
 
 if ($WhatIf) {
@@ -531,8 +566,12 @@ if ($WhatIf) {
 # timeout. The agents only read public FPL data, search the web, and send mail.
 # The top-level session runs the meeting, so it is the manager: Fable, per Ido
 # (15 Oct 2026). The specialists are pinned to Opus in .claude/agents/.
+# Windows PowerShell 5.1 does not escape double quotes inside an argument to a
+# native exe, so a prompt containing "40 pts · -10 on Nott'm Random Forest" was split apart and
+# claude died with "unknown option '-10'" (30 Oct 2026). Escape them (and any
+# backslashes before them) the way the C runtime expects.
 $claudeArgs = @(
-    '-p', $prompt
+    '-p', ($prompt -replace '(\\*)"', '$1$1\"')
     '--model', 'fable'
     '--permission-mode', 'bypassPermissions'
     '--add-dir', $Root

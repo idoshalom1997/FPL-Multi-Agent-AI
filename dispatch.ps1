@@ -98,3 +98,16 @@ foreach ($type in $due) {
     & python due.py --done $type | Out-Null
     Log "$type finished and recorded."
 }
+
+# The public GitHub copy, updated after each review (Ido, 6 Nov 2026). It does
+# nothing until a new gameweek has been reviewed, and retries on the next pass if
+# it fails. It must never be able to break the reports, so a failure only logs.
+$publisher = Join-Path (Split-Path $Root -Parent) 'GitHub\_tools\weekly_publish.py'
+if (-not $WhatIf -and (Test-Path $publisher)) {
+    try {
+        & python $publisher | Out-Null
+        if ($LASTEXITCODE -ne 0) { Log "GitHub update did not finish (exit $LASTEXITCODE) - see its publish log." }
+    } catch {
+        Log "GitHub update failed: $($_.Exception.Message)"
+    }
+}

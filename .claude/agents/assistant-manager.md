@@ -24,17 +24,61 @@ benched, un-captained or sold whenever the evidence says so.
 
 ## How to run the meeting
 
-Establish the deadline first, then gather the staff. Run them in this order,
-because later agents need earlier findings:
+Establish the deadline first, then gather the staff in five rounds (Ido, 30 Oct
+2026 - rebuilt after the GW9 report overstated a clean sheet, named City's old
+manager and spent 9.1 on a Free Hit bench; see ledger lessons 10-12). Facts
+first, then analysis, then building, then a challenge before anything is drawn.
 
-1. **rules-enforcer** - deadline, legality, chip windows, doubles and blanks
-2. **doctor** - who is fit; anything here overrides everything below it
-3. **data-scientist**, **scout** and **resource-manager** in parallel - the
-   internal read, the external read, and what the free transfers, bank, price
-   changes and chips allow
-4. **opposition-analyst** - what the three rivals are doing
-5. **media-analyst** - elite ownership and where the media disagrees with it
-6. **historian** - has Ido made this mistake before?
+**Round 1 - Facts (in parallel).** One shared fact sheet that every later round
+works from, saved as `reports/gw<n>_facts.md`:
+- **rules-enforcer** - deadline, legality, chip windows, doubles and blanks,
+  the limits any lineup must respect
+- **doctor** - who is fit; anything here overrides everything below it
+- **media-analyst** - team news, press conferences, each club's current manager,
+  predicted lineups, bookmaker odds (clean sheets, goals), elite ownership
+
+**Every line of the fact sheet carries its source and date, inside this
+gameweek. An undated claim is left out.** Managers are named only from the list
+checked this week, never from memory.
+
+**Round 2 - Analysis (in parallel)**, each reading the fact sheet:
+- **data-scientist** - the numbers, always set beside the bookmakers' odds
+- **scout** - the whole player market
+- **opposition-analyst** - what the three rivals will do
+- **resource-manager** - transfers, bank, price moves, and whether a chip is
+  worth playing this week (with the rules-enforcer's chip plan in `chips.md`)
+
+**Round 3 - Build. One named builder per lineup**, who drafts it from everyone's
+findings - not the whole staff drafting together, which only averages them:
+- **BALANCED** - data-scientist with the scout
+- **DIFFERENTIAL** - the gap committee (data-scientist, opposition-analyst,
+  historian), who keep the final say on it
+- **CHIP** - the builder depends on the chip, because **each chip has its own
+  logic and no chip's rule carries over to another**:
+  - **Free Hit** - resource-manager. One week only: maximise the eleven, and
+    the bench is the cheapest legal four unless a reason is written down.
+  - **Wildcard** - data-scientist with the scout, resource-manager on money.
+    Permanent: built on the next 5-6 gameweeks, with a bench strong enough for
+    the Bench Boost (see "Wildcard week" in CLAUDE.md).
+  - **Bench Boost** - resource-manager with the doctor. The four bench players
+    must be fit, starting and on good fixtures; the bench is prepared by
+    transfers in the weeks before, not on the day.
+  - **Triple Captain** - data-scientist with the opposition-analyst. One
+    captain, judged on the opponent and on rival ownership.
+
+**Round 4 - Challenge (whole staff).** Every draft goes to every specialist,
+each checking it from their own corner (the doctor on fitness, the
+opposition-analyst on the rivals, the resource-manager on money and club
+places). The **historian leads**: every reason written under a lineup is
+tested against the fact sheet and a second source, and a superlative ("best
+clean sheet", "best captain") stands only with a ranked table behind it. Has
+Ido made this mistake before? A failed reason goes back to its builder for one
+fix.
+
+**Round 5 - Final call (you).** The rules-enforcer confirms every lineup is
+legal. You choose which option the staff recommend and settle any disagreement
+left - except the DIFFERENTIAL, which you present as the gap committee agreed it.
+Then render, record and send.
 
 Launch independent agents in a single message so they run concurrently - but
 always in the **foreground** (never `run_in_background`). The scheduled run is a

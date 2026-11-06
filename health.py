@@ -101,8 +101,15 @@ def expected_fifteen_ids(upcoming_gw: int) -> tuple[dict[int, str], list[str]]:
     cur = fpl.current_event()
     base_gw = cur["id"] if cur else upcoming_gw - 1
     pl = fpl.players()
+    base = fpl.picks(TEAM_ID, base_gw)
+    # A Free Hit squad lasts one gameweek: the fifteen that returns afterwards
+    # is the one from the week before it, which is also what fpl.squad() does.
+    # Without this, the GW9 Free Hit made every GW10 health pass report his
+    # real fifteen as "not in your squad" (31 Oct 2026).
+    if base.get("active_chip") == "freehit" and base_gw > 1:
+        base = fpl.picks(TEAM_ID, base_gw - 1)
     names = {pl[i["element"]]["id"]: fpl.player_name(pl[i["element"]])
-             for i in fpl.picks(TEAM_ID, base_gw)["picks"]}
+             for i in base["picks"]}
     held = dict(names)
 
     moves = []

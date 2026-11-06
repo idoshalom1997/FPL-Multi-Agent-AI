@@ -70,6 +70,25 @@ DIFFERENTIAL / BALANCED trio is retired):
 
 If the two come out identical, say so and why - do not invent a difference.
 
+**Each chip has its own logic, and no chip's rule carries over to another**
+(Ido, 30 Oct 2026). A Free Hit maximises one week's eleven with the cheapest
+legal bench; a Wildcard is permanent and built on the next 5-6 gameweeks with a
+Bench-Boost-ready bench; a Bench Boost is about the four bench players' fixtures
+and minutes, prepared over the weeks before; a Triple Captain is one captain
+decision on opponent and rival ownership. Who builds each is in
+`.claude/agents/assistant-manager.md` (round 3); the lessons behind it are
+`ledger.md` 10-12.
+
+**After a Free Hit, the squad goes back to the one before it.** Ido played his
+own Free Hit in GW9; GW10 starts from the GW8 fifteen. `fpl.squad()` with no
+gameweek does this by itself (it skips a week whose `active_chip` is
+`freehit`); pass the gameweek explicitly to see what was picked that week.
+
+**When Ido goes his own way he gives a reason** (from GW9, 30 Oct 2026). It is
+recorded in `recommendations/gw<n>.json` under `ido_choice`, and the review
+judges it against the staff's reasoning on what was knowable before the
+deadline - the staff learn from his calls as well as their own.
+
 **In a chip week there is a third: CHIP** (Ido, 29 Oct 2026). When the staff
 recommend a chip, or Ido has said he plans one, the report adds a lineup built
 for that chip, titled with it (FREE HIT, BENCH BOOST, TRIPLE CAPTAIN, WILDCARD).
@@ -347,6 +366,14 @@ they display in the message body.
 
 Every subject is auto-prefixed `[FPL]` so reports are easy to find and filter.
 After sending, add the **FPL** label  to the thread.
+
+### The public GitHub copy: one short mail after each review
+
+After each review, `dispatch.ps1` runs `GitHub/_tools/weekly_publish.py`, which updates the public
+copy of this project (scrubbed: team names only, no IDs) with the results and any changed system files,
+sends one short mail, subject "GitHub update - GW<n>", and uploads. Ido asked for this on 6 Nov 2026 so
+that he never has to remind anyone or approve it. A private-details scan runs first: if it finds anything,
+nothing is uploaded and the mail says so.
 
 ### Keep it short - this is a hard rule
 
@@ -924,7 +951,7 @@ FPL Manager/
 ├── fpl.py             data layer
 ├── due.py             what report is due, judged from the deadline
 ├── chips.md           the chip plan - Rules Enforcer owns it
-├── progress.py        live per-agent progress board for a running staff meeting
+├── progress.py        live per-agent progress board for a running staff meeting (see below)
 ├── ledger.md          every chip, captain and transfer, judged right/wrong - Historian owns it
 ├── chipcalc.py        what each chip is worth, week by week
 ├── team_update.py     records the XI he tells us he is fielding
@@ -938,6 +965,18 @@ FPL Manager/
 ├── data/              cached API responses
 └── .claude/agents/    the staff, one file per role
 ```
+
+## Every staff meeting run from chat shows the progress board
+
+Ido's rule (15 Oct, restated 30 Oct 2026): whenever a staff meeting runs while
+he is in the chat - main report, a rerun, or a smaller meeting on his questions -
+he sees a bar per agent, live, and the **whole board** each time it changes, never
+a one-line summary. For a headless run, Monitor `python -u progress.py --watch`
+(it reads the newest transcript and the upcoming gameweek; it was hardcoded to
+GW7 until 30 Oct and declared a fresh meeting finished on sight). For specialists
+run as agents inside the chat session, which progress.py cannot see, draw the
+same board by hand and repost it as each one starts and reports back. The
+Monitor expires after 30 minutes - re-arm it.
 
 ## Status
 
