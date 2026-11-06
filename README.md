@@ -63,7 +63,7 @@ flowchart LR
     D -->|nothing due| Z[sleep]
     D -->|review / planning / main / check| R[run_report.ps1<br/>headless Claude]
     R --> AM[Assistant Manager<br/>orchestrator]
-    G[(Gmail via MCP<br/>my team screenshot)] --> AM
+    G[(Gmail<br/>my team screenshot)] --> AM
     AM --> S1[Rules Enforcer] & S2[Doctor] & S3[Data Scientist] & S4[Scout] & S5[Resource Manager] & S6[Opposition Analyst] & S7[Media Analyst] & S8[Historian]
     S1 & S2 & S3 & S4 & S5 & S6 & S7 & S8 --> F[(fpl.py<br/>data layer over the FPL API)]
     AM --> L[BALANCED + DIFFERENTIAL lineups<br/>+ CHIP lineup in a chip week]
@@ -81,7 +81,7 @@ A small Python file (`due.py`, no AI) decides whether one of four runs is due:
 |---|---|---|
 | **Review** | once the gameweek's data is final | scores last week's advice against what happened and updates the season plan |
 | **Planning** | 4 to 2 days before | chip timing, the season plan, the expected moves of the three rivals, and two checkable goals for the week |
-| **Main** | about 1 day before | reads my emailed team through the **Gmail MCP connector**, runs the staff meeting, and emails two lineups (three in a chip week) |
+| **Main** | about 1 day before | reads my emailed team straight from the mailbox, so a reply cannot be missed, runs the five-round staff meeting, and emails two lineups (three in a chip week) |
 | **Check** | last 8 hours | re-checks fitness and whether the report really arrived; silent unless something is wrong |
 
 Each run starts Claude **headlessly** (`claude -p`, no chat window, nobody watching).  
@@ -90,11 +90,13 @@ It does the work and emails me the result.
 ### The staff
 
 Each agent is one file in [`.claude/agents/`](.claude/agents/) that sets its role, the tools it may use and its model.  
-The orchestrator runs on Claude Fable and the specialists on Claude Opus.
+The orchestrator runs on Claude Fable and the specialists on Claude Opus.  
+Each meeting has five rounds: facts, analysis, build, challenge and a final call.  
+Each lineup has its own builder, and a chip lineup follows that chip's own logic.
 
 | Agent | How it does its job |
 |---|---|
-| **Assistant Manager** | The orchestrator. Calls the specialists in order, makes them answer each other instead of averaging, and builds the lineups. |
+| **Assistant Manager** | The orchestrator. Runs the five rounds, makes the specialists answer each other instead of averaging, and makes the final call on what is offered. |
 | Rules Enforcer | Checks every lineup is legal, owns the chip calendar, and rebuilds every manager's free transfers from their history. |
 | Doctor | Reads FPL's injury flags, then searches press conferences, because the official flags lag by hours. |
 | Data Scientist | Works from xG, xA, per-90 numbers and real team strength, and distrusts FPL's own "expected points". |
@@ -120,6 +122,7 @@ On top of it sit small analysis tools of our own, which the agents run like calc
 | [`chipcalc.py`](chipcalc.py) | what each chip is worth in points, gameweek by gameweek |
 | [`gap.py`](gap.py), [`league_status.py`](league_status.py) | the gap to each rival, and every manager's transfers, free transfers and chips left |
 | [`lineup.py`](lineup.py) | the FPL-style pitch pictures in every email |
+| [`teamsheet_mail.py`](teamsheet_mail.py) | reads my replies from the mailbox before a run starts |
 
 ## How it checks itself
 
@@ -128,7 +131,8 @@ Every recommendation is checked, so the system learns instead of guessing:
 1. **Saved before the matches.** Every lineup the staff offer is saved before the deadline, with the points they expect ([`outcome.py`](outcome.py)).
 2. **Scored after the matches.** The real result is downloaded and every lineup gets its real score, chips included.
 3. **Compared with simple alternatives.** Each result is compared with doing nothing, the top-100 average, the world average and FPL's Team of the Week ([`benchmark.py`](benchmark.py)).
-4. **Judged on the decision, not on luck.** The Historian marks each decision right or wrong based only on what was known before the deadline.
+4. **Judged on the decision, not on luck.** The Historian marks each decision right or wrong based only on what was known before the deadline.  
+   When I go my own way I write down why, and my reason is judged the same way.
 5. **Learning from mistakes.** Every report names one thing done differently because of a past mistake.  
    Each week's two goals are marked met or missed.
 
@@ -137,7 +141,8 @@ Every recommendation is checked, so the system learns instead of guessing:
 This repository is a public copy of a private working folder.  
 The other managers appear only by their team names.  
 My entry and league IDs, my email setup and the decision notes stay private (see `config.example.json`).  
-Results are refreshed each gameweek by [`export_results.py`](export_results.py) and published only after I approve them.
+This page updates itself after each gameweek's review, using [`export_results.py`](export_results.py), and emails me a short note.  
+An automatic check looks for private details before every upload and stops the upload if it finds any.
 
 ## Tools
 

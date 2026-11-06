@@ -373,7 +373,9 @@ After each review, `dispatch.ps1` runs `GitHub/_tools/weekly_publish.py`, which 
 copy of this project (scrubbed: team names only, no IDs) with the results and any changed system files,
 sends one short mail, subject "GitHub update - GW<n>", and uploads. Ido asked for this on 6 Nov 2026 so
 that he never has to remind anyone or approve it. A private-details scan runs first: if it finds anything,
-nothing is uploaded and the mail says so.
+nothing is uploaded and the mail says so. When system files changed that week, an agent also checks the
+README's description against the changes and corrects only what is now wrong. Never reveal personal
+information on the public page: no real names of the other managers, IDs, email addresses or computer paths.
 
 ### Keep it short - this is a hard rule
 

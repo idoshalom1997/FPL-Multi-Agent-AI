@@ -14,7 +14,7 @@ script reads that folder (read-only) and rewrites:
     README.md                          the Findings section, between the RESULTS markers
 
 Nothing is published by this script. It prepares a commit; pushing it is a
-separate step (`--publish`), taken only after the owner approves.
+separate step, taken after a check for private details has passed.
 
     python export_results.py              rewrite results/ and README, commit locally
     python export_results.py --publish    push the prepared commit to GitHub
@@ -429,7 +429,7 @@ def main(argv: list[str]) -> int:
             git("commit", "-m", f"Results after GW{weeks[-1]['gw']}",
                 "-m", "Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>")
             print(f"Committed results after GW{weeks[-1]['gw']} locally - not pushed. "
-                  "Run with --publish once approved.")
+                  "Run with --publish to upload.")
         else:
             print("Results unchanged - nothing to commit.")
     return 0
