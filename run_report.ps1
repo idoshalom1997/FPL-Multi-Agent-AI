@@ -443,8 +443,8 @@ CHECK THE PLANNING BRIEF'S PROMISES. Read this gameweek's two goals in
 season_plan.md ("## 6. Weekly goals") and fill in the result column: met /
 missed, with the number. Then add this gameweek to goals_public.json, the short
 version for the public page, as "<gw>": [{"goal": ..., "met": true/false,
-"result": ...}, {...}]. Each goal is one short sentence of about 12 words in plain
-language that anyone can follow: no file names, no jargon like XI or FH, and
+"result": ...}, {...}]. Each goal is about 8 words in plain language that anyone
+can follow, shown in a table cell: no file names, no jargon like XI or FH, and
 "result" is just the number that settled it, in a few words. Read the "Expected rivals" prediction and note in the
 progress log how much of it came true - that is how the opposition-analyst's
 predictions get better.

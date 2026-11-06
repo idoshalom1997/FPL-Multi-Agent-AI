@@ -47,12 +47,11 @@ The real score landed inside the staff's best-to-worst range in **1 of 1** weeks
 
 ### 5. Do we reach the goals we set?
 
-Goals met so far: **2 of 2**.
+So far we accomplished **2 of 2** of our total goals.
 
-**GW9**
-
-- **Met:** My Free Hit team beats the staff's lineup by 6 points or more (won by 41).
-- **Met:** Gain 3 points or more on Rookie mistakes and on at least one other friend (gained 3, plus 31 and 12 on the others).
+| GW | Goal 1 | Met? | Goal 2 | Met? |
+|---|---|:-:|---|:-:|
+| 9 | Free Hit team beats the staff's team by 6+ points | ✅ | Gain 3+ points on Rookie mistakes and one other friend | ✅ |
 <!-- RESULTS:END -->
 
 ## How it works

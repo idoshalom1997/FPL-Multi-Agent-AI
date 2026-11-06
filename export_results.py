@@ -384,11 +384,11 @@ def findings(staff, weeks, gaps, fc, gl, use) -> str:
                      "This section will compare each forecast with the real score.")
     out += ["", "### 5. Do we reach the goals we set?", ""]
     if gl:
-        out += [f"Goals met so far: **{sum(g['met'] for g in gl)} of {len(gl)}**."]
+        out += [f"So far we accomplished **{sum(g['met'] for g in gl)} of {len(gl)}** of our total goals.", "",
+                "| GW | Goal 1 | Met? | Goal 2 | Met? |", "|---|---|:-:|---|:-:|"]
         for gw in sorted({g["gw"] for g in gl}):
-            out += ["", f"**GW{gw}**", ""]
-            out += [f"- **{'Met' if g['met'] else 'Missed'}:** {g['goal'].rstrip('.')}"
-                    + (f" ({g['result']})." if g["result"] else ".") for g in gl if g["gw"] == gw]
+            cells = [f"{g['goal'].rstrip('.')} | {'✅' if g['met'] else '❌'}" for g in gl if g["gw"] == gw]
+            out += [f"| {gw} | " + " | ".join(cells) + " |"]
     else:
         out += lines("*Coming soon - from GW10.*",
                      "Each planning run sets two checkable goals for the week, for example "
